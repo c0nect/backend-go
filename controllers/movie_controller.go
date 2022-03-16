@@ -38,8 +38,16 @@ func CreateMovie(c *gin.Context) {
 		PosterPath:  input.PosterPath,
 	}
 
-	database.GetDatabase().Create(&movie) // create new movie
-
+	err = database.GetDatabase().Create(&movie).Error // create new movie
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	
+	database.GetDatabase().Create(&movie)
+		      
 	// send json response
 	c.JSON(200, gin.H{
 		"movie": movie,
